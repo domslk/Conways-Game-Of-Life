@@ -1,8 +1,8 @@
 import pygame, math, random
 
 
-width = 1920
-height = 1080
+width = 100
+height = 100
 square = 20
 gwidth = width // square
 gheight = height // square
@@ -20,8 +20,9 @@ grid = (40,40,40)
 alive = (255,255,255)
 
 position = []
-
-
+arr = [[0 for _ in range(gwidth)] for _ in range(gheight)]
+print(arr)
+newarr = [[0 for _ in range(gwidth)] for _ in range(gheight)]
 
 
 
@@ -30,6 +31,24 @@ def drawgrid():
         pygame.draw.line(screen, grid, (0, i * square), (width, i * square))
     for j in range(width):
         pygame.draw.line(screen, grid, (j * square,0), (j * square, height))
+
+def check():
+    moves = [
+        (-1, -1), (-1, 0), (-1, 1),
+        (0, -1), (0, 1),
+        (1, -1), (1, 0), (1, 1)
+    ]
+
+    for i in range(len(arr)):
+        for j in range(len(arr[1])):
+            count = 0
+            for movex, movey in moves:
+                x, y = movex + i, movey + j
+                if 0 <= x < len(arr) and 0 <= y < len(arr[0]):
+                    if arr[x][y] == 1:
+                        count += 1
+            newarr[i][j] = count
+
 
 
 while running:
@@ -42,13 +61,12 @@ while running:
             col = (math.ceil(event.pos[0] / square) * square) - square
             row = (math.ceil(event.pos[1] / square) * square) - square
             position.append((col, row))
-            print(position)
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE:
-                thing = random.randint(0, b= len(position)-1)
-                ind = position[thing]
-                position.pop(thing)
-                pygame.draw.rect(screen, background, (ind[0], ind[1], square, square))
+            arr[(col//20)][(row//20)] = 1
+            check()
+            print(position, arr)
+            for a in range(len(newarr)):
+                print(newarr[a])
+
     # fill the screen with a color to wipe away anything from last frame
     pygame.display.set_caption("Game of life")
 
@@ -57,6 +75,7 @@ while running:
     drawgrid()
     for x, y in position:
         pygame.draw.rect(screen, alive, (x, y, square, square))
+
     # flip() the display to put your work on screen
     pygame.display.flip()
     pygame.display.update()
