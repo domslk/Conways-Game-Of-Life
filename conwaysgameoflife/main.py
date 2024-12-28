@@ -1,8 +1,8 @@
-import pygame, math
+import pygame, math, random
 
 
-width = 500
-height = 500
+width = 1920
+height = 1080
 square = 20
 gwidth = width // square
 gheight = height // square
@@ -42,10 +42,13 @@ while running:
             col = (math.ceil(event.pos[0] / square) * square) - square
             row = (math.ceil(event.pos[1] / square) * square) - square
             position.append((col, row))
-            print(position, event)
-
-
-
+            print(position)
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                thing = random.randint(0, b= len(position)-1)
+                ind = position[thing]
+                position.pop(thing)
+                pygame.draw.rect(screen, background, (ind[0], ind[1], square, square))
     # fill the screen with a color to wipe away anything from last frame
     pygame.display.set_caption("Game of life")
 
