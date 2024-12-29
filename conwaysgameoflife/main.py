@@ -1,8 +1,8 @@
 import pygame, math, time
 
 
-width = 300
-height = 300
+width = 1920
+height = 1080
 square = 20
 gwidth = width // square
 gheight = height // square
@@ -60,10 +60,12 @@ def dead_or_alive():
             if newarr[i][j] < 2 and arr[i][j] == 1:
                 if (j * square, i * square) in position:
                     toremove.append((j * square, i * square))
+                    pygame.draw.rect(screen, background, (j*20, i*20, square, square))
                 arr[i][j] = 0
             if newarr[i][j] > 3 and arr[i][j] == 1:
                 if (j * square, i * square) in position:
                     toremove.append((j * square, i * square))
+                    pygame.draw.rect(screen, background, (j * 20, i * 20, square, square))
                 arr[i][j] = 0
             if newarr[i][j] == 3 and arr[i][j] == 0:
                 if (j * square, i * square) not in position:
