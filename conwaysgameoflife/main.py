@@ -1,8 +1,8 @@
 import pygame, math, random
 
 
-width = 100
-height = 100
+width = 1920
+height = 1080
 square = 20
 gwidth = width // square
 gheight = height // square
@@ -32,6 +32,8 @@ def drawgrid():
     for j in range(width):
         pygame.draw.line(screen, grid, (j * square,0), (j * square, height))
 
+
+
 def check():
     moves = [
         (-1, -1), (-1, 0), (-1, 1),
@@ -48,9 +50,20 @@ def check():
                     if arr[x][y] == 1:
                         count += 1
             newarr[i][j] = count
-
-
-
+    dead_or_alive()
+def dead_or_alive():
+    for i in range(len(newarr)):
+        for j in range(len(newarr)):
+            if newarr[i][j] < 2 and arr[i][j] == 1:
+                pygame.draw.rect(screen, background, (i*20, j*20, square, square))
+                arr[i][j] = 0
+            if newarr[i][j] > 3 and arr[i][j] == 1:
+                pygame.draw.rect(screen, background, (i*20, j*20, square, square))
+                arr[i][j] = 0
+            if newarr[i][j] == 3 and arr[i][j] == 0:
+                pygame.draw.rect(screen, alive, (i*20, j*20, square, square))
+                arr[i][j] = 1
+drawgrid()
 while running:
     # poll for events
     # pygame.QUIT event means the user clicked X to close your window
@@ -61,20 +74,24 @@ while running:
             col = (math.ceil(event.pos[0] / square) * square) - square
             row = (math.ceil(event.pos[1] / square) * square) - square
             position.append((col, row))
-            arr[(col//20)][(row//20)] = 1
-            check()
-            print(position, arr)
-            for a in range(len(newarr)):
-                print(newarr[a])
+            arr[(row//20)][(col//20)] = 1
 
+
+
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                check()
+                print(f"position: {position}, arr: {arr}")
+                for a in range(len(newarr)):
+                    print(f"newarr[a]: {newarr[a]}")
     # fill the screen with a color to wipe away anything from last frame
     pygame.display.set_caption("Game of life")
 
 
     # RENDER YOUR GAME HERE
-    drawgrid()
     for x, y in position:
         pygame.draw.rect(screen, alive, (x, y, square, square))
+
 
     # flip() the display to put your work on screen
     pygame.display.flip()
