@@ -1,8 +1,8 @@
-import pygame, math, random
+import pygame, math, time
 
 
-width = 1920
-height = 1080
+width = 300
+height = 300
 square = 20
 gwidth = width // square
 gheight = height // square
@@ -52,18 +52,36 @@ def check():
             newarr[i][j] = count
     dead_or_alive()
 def dead_or_alive():
-    for i in range(len(newarr)):
-        for j in range(len(newarr)):
+    global position
+    toremove = []
+
+    for i in range(gheight):
+        for j in range(gwidth):
             if newarr[i][j] < 2 and arr[i][j] == 1:
-                pygame.draw.rect(screen, background, (i*20, j*20, square, square))
+                if (j * square, i * square) in position:
+                    toremove.append((j * square, i * square))
                 arr[i][j] = 0
             if newarr[i][j] > 3 and arr[i][j] == 1:
-                pygame.draw.rect(screen, background, (i*20, j*20, square, square))
+                if (j * square, i * square) in position:
+                    toremove.append((j * square, i * square))
                 arr[i][j] = 0
             if newarr[i][j] == 3 and arr[i][j] == 0:
-                pygame.draw.rect(screen, alive, (i*20, j*20, square, square))
+                if (j * square, i * square) not in position:
+                    position.append((j * square, i * square))
                 arr[i][j] = 1
-drawgrid()
+
+
+    for coord in toremove:
+        if coord in position:
+            position.remove(coord)
+    screen.fill(background)
+    drawgrid()
+    for x, y in position:
+        pygame.draw.rect(screen, alive, (x, y, square, square))
+
+
+
+
 while running:
     # poll for events
     # pygame.QUIT event means the user clicked X to close your window
@@ -75,23 +93,29 @@ while running:
             row = (math.ceil(event.pos[1] / square) * square) - square
             position.append((col, row))
             arr[(row//20)][(col//20)] = 1
-
-
+            for x, y in position:
+                pygame.draw.rect(screen, alive, (x, y, square, square))
 
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
                 check()
-                print(f"position: {position}, arr: {arr}")
+                print(f"position: {position}")
                 for a in range(len(newarr)):
                     print(f"newarr[a]: {newarr[a]}")
+                print()
+                for k in range(len(arr)):
+                    print(f"arr: {arr[k]}")
+
     # fill the screen with a color to wipe away anything from last frame
     pygame.display.set_caption("Game of life")
 
 
     # RENDER YOUR GAME HERE
-    for x, y in position:
-        pygame.draw.rect(screen, alive, (x, y, square, square))
 
+
+
+
+    drawgrid()
 
     # flip() the display to put your work on screen
     pygame.display.flip()
